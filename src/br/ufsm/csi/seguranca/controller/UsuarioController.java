@@ -3,16 +3,23 @@ package br.ufsm.csi.seguranca.controller;
 import br.ufsm.csi.seguranca.dao.HibernateDAO;
 import br.ufsm.csi.seguranca.model.Log;
 import br.ufsm.csi.seguranca.model.Usuario;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+
+
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.Response;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,12 +39,12 @@ public class UsuarioController {
     private HibernateDAO hibernateDAO;
 
     @Transactional
-    @RequestMapping("cria-usuario.html")
-    public String criaUsuario(Usuario usuario, String senhaStr) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    @RequestMapping(value = "cria-usuario", method = RequestMethod.POST)
+    public Response criaUsuario(HttpServletRequest request, Usuario usuario, String senhaStr) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         usuario.setSenha(md.digest(senhaStr.getBytes("ISO-8859-1")));
         hibernateDAO.criaObjeto(usuario);
-        return "usuario";
+
     }
 
     @Transactional
